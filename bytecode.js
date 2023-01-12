@@ -1,95 +1,95 @@
 const fs = require('fs');
-let variables = {};
+let letiables = {};
 let funcs = {};
-let gval = (a) => variables[a];
-let defv = (a, b) => variables[a] = b;
+let gval = (a) => letiables[a];
+let defv = (a, b) => letiables[a] = b;
 let opcodes = {
-    definev: 1,
-    print: 2,
-    definef: 3,
-	writefile: 4,
-	readfile: 5,
-	callf: 6,
-	add: 7,
-	sub: 8,
-	div: 9,
-	mult: 10,
-	pow: 11,
-	sqrt: 12,
-	lshift: 13,
-	rshift: 14,
-	zrshift: 15
+  definev: 1,
+  print: 2,
+  definef: 3,
+  writefile: 4,
+  readfile: 5,
+  callf: 6,
+  add: 7,
+  sub: 8,
+  div: 9,
+  mult: 10,
+  pow: 11,
+  sqrt: 12,
+  lshift: 13,
+  rshift: 14,
+  zrshift: 15
 }
-for (var t in opcodes) global[t] = opcodes[t];
+for (let t in opcodes) global[t] = opcodes[t];
 let runInstrs = (instrs) => {
-	let retval = undefined;
-    instrs.forEach((code, instrc) => {
-        let args = code.slice(1);
-        switch (code[0]) {
-            case 1:
-                defv(args[0], args[1]);
-                break;
-            case 2:
-				let estr = "";
-                args.forEach(e => {
-					let str = "";
-					e.forEach(x => {
-						if (!x.length) {
-							if (x.variable) {
-								str += gval(x.value);
-							} else {
-								str += x.value;
-							}
-						} else {
-							estr += runInstrs([x])
-						}
-					});
-					estr += str + ' '
-				});
-				console.log(estr);
-                break;
-            case 3:
-                funcs[args[0]] = args[1];
-                break;
-			case 4:
-				fs.writeFileSync(args[0], args[1]);
-				break;
-			case 5:
-				retval = fs.readFileSync(args[0]).toString();
-				break;
-			case 6:
-				runInstrs(funcs[args[0]])
-				break;
-			case 7:
-				 retval = args[0] + args[1];
-			break;
-			case 8:
-				 retval = args[0] - args[1];
-			break;
-			case 9:
-				 retval = args[0] / args[1];
-			break;
-			case 10:
-				 retval = args[0] * args[1];
-			break;
-			case 11:
-				 retval = args[0] ** args[1];
-			break;
-			case 12:
-				 retval = Math.sqrt(args[0]);
-			break;
-			case 13:
-				 retval = args[0] << args[1];
-			break;
-			case 14:
-				 retval = args[0] >> args[1];
-			break;
-			case 15:
-				 retval = args[0] >>> args[1];
-			break;
-        }
-    })
-	return retval;
+  let retval = undefined;
+  instrs.forEach((code, instrc) => {
+    let args = code.slice(1);
+    switch (code[0]) {
+      case 1:
+        defv(args[0], args[1]);
+        break;
+      case 2:
+        let estr = "";
+        args.forEach(e => {
+          let str = "";
+          e.forEach(x => {
+            if (!x.length) {
+              if (x.letiable) {
+                str += gval(x.value);
+              } else {
+                str += x.value;
+              }
+            } else {
+              estr += runInstrs([x])
+            }
+          });
+          estr += str + ' '
+        });
+        console.log(estr);
+        break;
+      case 3:
+        funcs[args[0]] = args[1];
+        break;
+      case 4:
+        fs.writeFileSync(args[0], args[1]);
+        break;
+      case 5:
+        retval = fs.readFileSync(args[0]).toString();
+        break;
+      case 6:
+        runInstrs(funcs[args[0]])
+        break;
+      case 7:
+        retval = args[0] + args[1];
+        break;
+      case 8:
+        retval = args[0] - args[1];
+        break;
+      case 9:
+        retval = args[0] / args[1];
+        break;
+      case 10:
+        retval = args[0] * args[1];
+        break;
+      case 11:
+        retval = args[0] ** args[1];
+        break;
+      case 12:
+        retval = Math.sqrt(args[0]);
+        break;
+      case 13:
+        retval = args[0] << args[1];
+        break;
+      case 14:
+        retval = args[0] >> args[1];
+        break;
+      case 15:
+        retval = args[0] >>> args[1];
+        break;
+    }
+  })
+  return retval;
 }
 let change_compress = (arr) => {
   return arr.map((x, i) => {
@@ -120,7 +120,7 @@ const getRepeatedChars = (str) => {
 }
 let ccn_enc = (h) => {
   let str = String.fromCharCode(h[0]) + '';
-  for (var t in h[1]) {
+  for (let t in h[1]) {
     str += t + '' + h[1][t].map(x => String.fromCharCode(x)).join('') + ''
   }
   return str.slice(0, -1);
@@ -138,29 +138,29 @@ let ccn_dec = (str) => {
   arr.push(dic);
   return arr;
 }
-let hexEncode = function(the){
-    var hex, i;
+let hexEncode = function(the) {
+  let hex, i;
 
-    var result = "";
-    for (i=0; i<the.length; i++) {
-        hex = the.charCodeAt(i).toString(16);
-        result += ("000"+hex).slice(-4);
-    }
+  let result = "";
+  for (i = 0; i < the.length; i++) {
+    hex = the.charCodeAt(i).toString(16);
+    result += ("000" + hex).slice(-4);
+  }
 
-    return result
+  return result
 }
-let hexDecode = function(the){
-    var j;
-    var hexes = the.match(/.{1,4}/g) || [];
-    var back = "";
-    for(j = 0; j<hexes.length; j++) {
-        back += String.fromCharCode(parseInt(hexes[j], 16));
-    }
+let hexDecode = function(the) {
+  let j;
+  let hexes = the.match(/.{1,4}/g) || [];
+  let back = "";
+  for (let j = 0; j < hexes.length; j++) {
+    back += String.fromCharCode(parseInt(hexes[j], 16));
+  }
 
-    return back;
+  return back;
 }
 let rev = (nst) => {
-    return hexDecode(hexEncode(nst).split('').reverse().join(''))
+  return hexDecode(hexEncode(nst).split('').reverse().join(''))
 }
 let strConstructor = (str) => {
   let dups = {};
@@ -173,7 +173,7 @@ let strConstructor = (str) => {
       dups[rev(x)].push(i)
     }
   })
-  for (var e in dups) {
+  for (let e in dups) {
     dups[e].sort((a, b) => a - b)
     dups[e] = change_compress(dups[e]);
   }
@@ -182,7 +182,7 @@ let strConstructor = (str) => {
 let strDeconstructor = (dups) => {
   dups = ccn_dec(dups);
   let str = new Array(dups[0] - 1);
-  for (var letter in dups[1]) {
+  for (let letter in dups[1]) {
     let l = change_decompress(dups[1][letter]);
     l.forEach(nl => {
       str[nl] = letter;
@@ -192,11 +192,11 @@ let strDeconstructor = (dups) => {
 }
 
 let compileInstructions = (instructs) => {
-	return strConstructor(JSON.stringify(instructs));
+  return strConstructor(JSON.stringify(instructs));
 }
 let runInstructions = (instructions) => {
-	runInstrs(JSON.parse(strDeconstructor(instructions.toString())));
-	runInstrs(funcs.main);
+  runInstrs(JSON.parse(strDeconstructor(instructions.toString())));
+  runInstrs(funcs.main);
 }
 
 module.exports = { compileInstructions, runInstructions }
